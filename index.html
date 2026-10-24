@@ -1,0 +1,1009 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Hoofddorp Open Days 2026–27</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a school agenda ("jaarplanner") read by Dutch week number. Start screen: pick schools, then a period. Results: season strip, week-by-week list, school directory. */
+:root {
+  --paper: #f3f6f4;
+  --surface: #ffffff;
+  --ink: #13261f;
+  --ink-2: #4b5d56;
+  --ink-3: #74857e;
+  --line: #d6dfda;
+  --accent: #1d6a5a;
+  --accent-soft: #dcebe5;
+  --on-accent: #ffffff;
+  --shadow: rgba(19, 38, 31, 0.18);
+  --t-info: #3a5898;
+  --t-open: #1d6a5a;
+  --t-trial: #a5620c;
+  --t-reg: #6c5596;
+  --warn: #a33a2b;
+  --warn-soft: #f8e2dd;
+  --note: #7a5a00;
+  --note-soft: #fbefcf;
+  --font-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0e1614; --surface: #15201c; --ink: #e3ece8; --ink-2: #a2b4ad; --ink-3: #7c8f88;
+    --line: #2a3a34; --accent: #6fc3ad; --accent-soft: #1b3830; --on-accent: #0e1614; --shadow: rgba(0, 0, 0, 0.5);
+    --t-info: #92abe3; --t-open: #6fc3ad; --t-trial: #e8b35c; --t-reg: #b9a7e2;
+    --warn: #f09a8a; --warn-soft: #3c1f1a; --note: #f0c968; --note-soft: #372d12;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0e1614; --surface: #15201c; --ink: #e3ece8; --ink-2: #a2b4ad; --ink-3: #7c8f88;
+  --line: #2a3a34; --accent: #6fc3ad; --accent-soft: #1b3830; --on-accent: #0e1614; --shadow: rgba(0, 0, 0, 0.5);
+  --t-info: #92abe3; --t-open: #6fc3ad; --t-trial: #e8b35c; --t-reg: #b9a7e2;
+  --warn: #f09a8a; --warn-soft: #3c1f1a; --note: #f0c968; --note-soft: #372d12;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+}
+/* Paints the phone's top safe area in the bar colour, so the list does not scroll visibly above the sticky bar. */
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+.wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding-block: 32px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid;
+  gap: 40px;
+}
+/* Grid children default to min-width:auto. Without this, the wide season strip makes the whole page wider than a phone. */
+.wrap > *, .results > *, .setup > *, .season > *, .period > *, .week > *, .events > * { min-width: 0; }
+a { color: var(--accent); text-underline-offset: 2px; }
+a:focus-visible, button:focus-visible, input:focus-visible, .tog input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+/* Top bar: name, selection summary (results only), language switch */
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9; background: var(--surface); border-bottom: 1px solid var(--line); }
+.bar-in {
+  max-width: 1080px; margin: 0 auto; padding-block: 8px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px 16px; min-height: 52px;
+}
+.brand { flex: none; color: var(--ink-2); }
+.sel-sum { flex: 1 1 280px; min-width: 0; display: flex; align-items: center; gap: 10px; }
+.sel-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; color: var(--ink-2); }
+.sel-text b { color: var(--ink); }
+.lang { margin-left: auto; flex: none; display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 2px; background: var(--paper); }
+.lang button {
+  font-family: var(--font-mono); font-weight: 500; font-size: 13px; letter-spacing: 0.06em; line-height: 1;
+  border: 0; border-radius: 999px; padding: 8px 12px; background: transparent; color: var(--ink-2); cursor: pointer;
+}
+.lang button[aria-pressed="true"] { background: var(--ink); color: var(--surface); }
+
+/* Buttons */
+.btn {
+  font-family: var(--font-body); font-size: 15px; font-weight: 700; line-height: 1.2;
+  border: 1px solid var(--line); border-radius: 8px; padding: 9px 14px; background: var(--surface); color: var(--ink); cursor: pointer;
+}
+.btn:hover { border-color: var(--accent); }
+.btn.small { font-size: 13.5px; font-weight: 400; padding: 6px 12px; border-radius: 999px; background: var(--paper); color: var(--ink-2); white-space: nowrap; }
+.btn.small.mono { font-family: var(--font-mono); font-size: 12.5px; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); font-size: 17px; padding: 13px 22px; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn:disabled:hover { border-color: var(--line); }
+.btn.primary:disabled:hover { border-color: var(--accent); }
+
+/* Header */
+header { display: grid; gap: 14px; }
+h1 { font-size: clamp(34px, 6vw, 56px); font-weight: 800; line-height: 1.02; }
+h1 .yr { color: var(--accent); }
+.lede { max-width: 64ch; color: var(--ink-2); margin: 0; font-size: 17px; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 14px; color: var(--ink-2); }
+.facts b { color: var(--ink); font-family: var(--font-mono); font-weight: 500; }
+
+/* Rule box */
+.rule {
+  display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; align-items: start;
+  background: var(--warn-soft); border-radius: 10px; padding: 14px 16px; max-width: 760px;
+}
+.rule .clock { font-family: var(--font-mono); font-weight: 500; font-size: 22px; color: var(--warn); line-height: 1.2; }
+.rule p { margin: 0; font-size: 15px; }
+.rule strong { color: var(--warn); }
+
+/* Start screen */
+.setup { display: grid; gap: 20px; }
+.step { display: grid; gap: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 18px 20px; }
+.step-head { display: flex; gap: 14px; align-items: flex-start; }
+.step-n {
+  flex: none; width: 30px; height: 30px; border-radius: 50%; margin-top: 1px;
+  display: grid; place-items: center; background: var(--ink); color: var(--surface);
+  font-family: var(--font-mono); font-weight: 500; font-size: 14px;
+}
+.step-head h2 { font-size: 24px; line-height: 1.2; }
+.step-head p { margin: 2px 0 0; color: var(--ink-2); font-size: 15px; max-width: 64ch; }
+.quick { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.quick .q-lab { font-size: 13px; color: var(--ink-3); margin-left: 8px; }
+.pick-group { display: grid; gap: 8px; }
+.pick-group h3, .sgroup h3 { font-size: 13px; font-family: var(--font-mono); font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); }
+.pick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: 8px; }
+.pick { position: relative; display: grid; min-width: 0; }
+.pick input { position: absolute; opacity: 0; pointer-events: none; }
+.pick-box {
+  display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 3px 10px; align-content: start;
+  border: 1px solid var(--line); border-radius: 10px; padding: 11px 12px; background: var(--paper); cursor: pointer; user-select: none;
+}
+.pick-box > :not(.ck) { grid-column: 2; }
+.ck {
+  grid-column: 1; grid-row: 1 / span 3; width: 20px; height: 20px; margin-top: 1px;
+  border: 1.5px solid var(--ink-3); border-radius: 5px; display: grid; place-items: center; background: var(--surface);
+}
+.pick:hover .pick-box { border-color: var(--accent); }
+.pick input:checked + .pick-box { border-color: var(--accent); background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent); }
+.pick input:checked + .pick-box .ck { background: var(--accent); border-color: var(--accent); }
+.pick input:checked + .pick-box .ck::after { content: "✓"; color: var(--on-accent); font-size: 13px; font-weight: 700; line-height: 1; }
+.pick input:focus-visible + .pick-box { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pick-name { font-weight: 700; line-height: 1.25; }
+.pick-meta { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; font-size: 13.5px; color: var(--ink-2); }
+.pick-count { font-family: var(--font-mono); font-size: 12px; color: var(--ink-3); }
+.pick-count.has { color: var(--accent); }
+.dates { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: end; }
+.field { display: grid; gap: 4px; font-size: 13px; color: var(--ink-3); }
+.field input {
+  font-family: var(--font-mono); font-size: 16px; color: var(--ink); background: var(--paper);
+  border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; min-width: 0; max-width: 100%;
+}
+.err { margin: 0; color: var(--warn); font-size: 14.5px; font-weight: 700; }
+.go {
+  position: sticky; bottom: 0; z-index: 5;
+  display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; justify-content: space-between;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+  padding: 14px 18px calc(14px + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 -8px 24px -16px var(--shadow);
+}
+.go-sum { margin: 0; flex: 1 1 280px; min-width: 0; color: var(--ink-2); font-size: 15px; }
+.go-sum b { color: var(--ink); }
+
+/* Results header */
+.results { display: grid; gap: 40px; }
+.res-head { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: end; justify-content: space-between; border-bottom: 2px solid var(--ink); padding-bottom: 12px; }
+.res-head > div { min-width: 0; flex: 1 1 320px; display: grid; gap: 4px; }
+.res-head h2 { font-size: clamp(24px, 3.6vw, 32px); }
+.res-head h2:focus { outline: none; }
+.res-sub { margin: 0; color: var(--ink-2); font-size: 15px; }
+.res-sub b { color: var(--ink); }
+
+/* Season strip */
+.season { display: grid; gap: 10px; }
+.season-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; }
+.season-head h2 { font-size: 20px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+.sw.info, .blk.info { background: var(--t-info); }
+.sw.open, .blk.open { background: var(--t-open); }
+.sw.trial, .blk.trial { background: var(--t-trial); }
+.sw.reg, .blk.reg { background: var(--t-reg); }
+.strip-scroll { overflow-x: auto; padding-bottom: 4px; }
+/* --weeks is set by the script: 29px per week minimum (scrolls on a phone), 64px maximum (a short period does not stretch). */
+.strip, .months {
+  display: grid; grid-auto-flow: column; grid-auto-columns: minmax(26px, 1fr); gap: 3px;
+  min-width: calc(var(--weeks, 20) * 29px); max-width: calc(var(--weeks, 20) * 64px);
+}
+.strip { align-items: end; }
+.wk { display: grid; gap: 3px; justify-items: stretch; text-decoration: none; color: var(--ink-3); }
+.wk .stack { display: flex; flex-direction: column-reverse; gap: 2px; height: 96px; justify-content: flex-start; }
+.blk { height: 9px; border-radius: 2px; }
+.blk.past { opacity: 0.25; }
+.wk .lab { font-family: var(--font-mono); font-size: 11px; text-align: center; border-top: 1px solid var(--line); padding-top: 4px; }
+.wk.gap .lab { color: var(--line); }
+.wk.now .lab { color: var(--ink); font-weight: 500; border-top: 2px solid var(--accent); }
+.wk:hover .lab { color: var(--accent); }
+.months { font-size: 12px; color: var(--ink-2); }
+.months span { white-space: nowrap; }
+
+/* Filters */
+.filters {
+  display: grid; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px;
+}
+.frow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.flabel { font-size: 13px; color: var(--ink-3); min-width: 76px; }
+.tog { position: relative; }
+.tog input { position: absolute; opacity: 0; pointer-events: none; }
+.tog span {
+  display: inline-flex; align-items: center; gap: 6px; cursor: pointer; user-select: none;
+  border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; font-size: 14px; color: var(--ink-2); background: var(--paper);
+}
+.tog input:checked + span { background: var(--accent-soft); border-color: var(--accent); color: var(--ink); }
+.tog input:checked + span::before { content: "✓"; font-size: 12px; color: var(--accent); }
+.count { font-size: 13px; color: var(--ink-3); font-family: var(--font-mono); }
+
+/* Timeline */
+.timeline { display: grid; gap: 40px; }
+.period { display: grid; gap: 14px; }
+.period-head { display: grid; gap: 4px; border-bottom: 2px solid var(--ink); padding-bottom: 8px; }
+.period-head h2 { font-size: clamp(24px, 3.6vw, 32px); }
+.period-head p { margin: 0; color: var(--ink-2); font-size: 15px; max-width: 70ch; }
+.week { display: grid; gap: 8px; scroll-margin-top: 72px; }
+.week-h { display: flex; gap: 12px; align-items: baseline; padding-top: 6px; }
+.week-h .wn { font-family: var(--font-mono); font-weight: 500; font-size: 13px; color: var(--surface); background: var(--ink); border-radius: 4px; padding: 1px 7px; }
+.week-h .wr { font-size: 14px; color: var(--ink-2); }
+.week-h .wnow { font-size: 12px; font-family: var(--font-mono); color: var(--accent); }
+.events { display: grid; gap: 8px; }
+.ev {
+  display: grid; grid-template-columns: 76px 128px minmax(0, 1fr) 40px; gap: 4px 16px; align-items: start;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 12px 12px 16px;
+}
+.ev.planned { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.ev-when { display: grid; line-height: 1.2; }
+.ev-day { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); }
+.ev-date { font-family: var(--font-display); font-weight: 800; font-size: 20px; }
+.ev-rel { font-family: var(--font-mono); font-size: 11px; color: var(--accent); margin-top: 2px; }
+.ev-time { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 14px; color: var(--ink); padding-top: 2px; }
+.ev-time small { display: block; color: var(--ink-3); font-size: 12px; }
+.ev-body { display: grid; gap: 4px; min-width: 0; }
+.ev-head { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; font-size: 13px; }
+.type { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; display: inline-flex; gap: 6px; align-items: center; }
+.type::before { content: ""; width: 8px; height: 8px; border-radius: 2px; background: currentColor; }
+.type.info { color: var(--t-info); } .type.open { color: var(--t-open); } .type.trial { color: var(--t-trial); } .type.reg { color: var(--t-reg); }
+.ev-school { color: var(--ink-2); }
+.ev-school b { color: var(--ink); }
+.ev-title { font-size: 17px; font-weight: 700; margin: 0; line-height: 1.3; font-family: var(--font-body); }
+.ev-desc { margin: 0; font-size: 14.5px; color: var(--ink-2); max-width: 70ch; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.chip { font-size: 12.5px; border-radius: 6px; padding: 2px 8px; border: 1px solid var(--line); color: var(--ink-2); max-width: 100%; }
+.chip.lvl { font-family: var(--font-mono); font-size: 11.5px; padding: 2px 6px; white-space: nowrap; }
+.chip.must { background: var(--note-soft); border-color: transparent; color: var(--note); font-weight: 700; }
+.chip.must a { color: inherit; }
+.chip.walk { background: var(--accent-soft); border-color: transparent; color: var(--accent); }
+.chip.tbd { border-style: dashed; }
+.chip.clash { background: var(--warn-soft); border-color: transparent; color: var(--warn); font-weight: 700; }
+.chip.leave { background: var(--accent-soft); border-color: transparent; color: var(--accent); font-weight: 700; }
+.star {
+  width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--line); background: var(--paper); cursor: pointer;
+  display: grid; place-items: center; color: var(--ink-3);
+}
+.star svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; }
+.star[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+.star[aria-pressed="true"] svg { fill: currentColor; }
+.empty { color: var(--ink-3); font-size: 15px; padding: 8px 0; margin: 0; }
+.past-note { font-size: 13px; color: var(--ink-3); }
+
+/* Anytime */
+.anytime { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 10px; }
+.any { border: 1px dashed var(--line); border-radius: 10px; padding: 12px 14px; display: grid; gap: 4px; background: var(--paper); }
+.any h3 { font-family: var(--font-body); font-size: 15.5px; }
+.any p { margin: 0; font-size: 14.5px; color: var(--ink-2); }
+
+/* Schools */
+.schools { display: grid; gap: 14px; }
+.schools > h2 { font-size: clamp(24px, 3.6vw, 32px); border-bottom: 2px solid var(--ink); padding-bottom: 8px; }
+.sgroup { display: grid; gap: 10px; }
+.sgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 10px; }
+.sc { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.sc h4 { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 19px; line-height: 1.2; }
+.sc .addr { font-size: 14px; color: var(--ink-2); }
+.sc p { margin: 0; font-size: 14.5px; color: var(--ink-2); }
+.sc .meta { font-size: 13px; color: var(--ink-3); font-family: var(--font-mono); }
+
+/* Notes */
+.notes { display: grid; gap: 10px; max-width: 760px; }
+.notes h2 { font-size: 22px; }
+.notes ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; color: var(--ink-2); font-size: 15px; }
+.notes li b { color: var(--ink); }
+.sources { font-size: 13.5px; color: var(--ink-3); }
+.sources ul { columns: 2 280px; column-gap: 24px; padding-left: 18px; margin: 6px 0 0; }
+.sources li { break-inside: avoid; margin-bottom: 3px; }
+
+@media (max-width: 680px) {
+  .wrap { padding-block: 24px 48px; gap: 32px; }
+  .brand { display: none; }
+  .lang { order: 1; }
+  .sel-sum { order: 2; flex-basis: 100%; }
+  /* The top bar has two rows on a phone, and it already has the "Change selection" button. */
+  .week { scroll-margin-top: 116px; }
+  .res-head .btn { display: none; }
+  .step { padding: 16px 14px 18px; }
+  .go { padding: 12px 14px calc(12px + env(safe-area-inset-bottom, 0px)); }
+  .go .btn.primary { width: 100%; }
+  .ev { grid-template-columns: minmax(0, 1fr) 40px; padding: 12px; }
+  .ev-when { grid-column: 1; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+  .ev-date { font-size: 18px; }
+  .ev-time { grid-column: 1; padding-top: 0; }
+  .ev-time small { display: inline; margin-left: 6px; }
+  .ev-body { grid-column: 1 / -1; }
+  .star { grid-column: 2; grid-row: 1 / span 2; }
+  .flabel { min-width: 100%; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .star, .tog span, .pick-box, .btn, .lang button { transition: background-color .15s ease, border-color .15s ease, color .15s ease; }
+}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="bar-in">
+    <span class="brand eyebrow" data-i18n="brand">Hoofddorp Open Days</span>
+    <div class="sel-sum" id="sel-sum" hidden>
+      <span class="sel-text" id="sel-text"></span>
+      <button type="button" class="btn small" id="btn-change-top" data-i18n="change">Change selection</button>
+    </div>
+    <div class="lang" role="group" id="lang" aria-label="Language / Taal">
+      <button type="button" id="lang-en" data-lang="en" aria-pressed="true" title="English">EN</button>
+      <button type="button" id="lang-nl" data-lang="nl" aria-pressed="false" title="Nederlands">NL</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <header id="intro">
+    <div class="eyebrow" data-i18n="eyebrow">Groep 8 · RKBS Klavertje Vier · school year 2026–27</div>
+    <h1><span data-i18n="h1">Hoofddorp Open Days</span> <span class="yr">2026–27</span></h1>
+    <p class="lede" id="lede">This page lists the open days, information evenings and trial lessons of all secondary schools in Hoofddorp. It also lists four schools near Hoofddorp from the Klavertje Vier report. All dates come from the school websites.</p>
+    <div class="facts" id="facts"></div>
+    <div class="rule">
+      <div class="clock">14:00</div>
+      <p><strong data-i18n="ruleHead">Klavertje Vier rule.</strong> <span data-i18n="ruleText">The school does not give leave for school visits during school hours. School ends at 14:00. Events that start before 14:00 on a school day have a red mark. Exception: pupils can leave 30 minutes early for the two VIA Hageveld afternoons.</span></p>
+    </div>
+  </header>
+
+  <!-- Start screen -->
+  <section class="setup" id="view-setup" aria-label="Selection">
+    <div class="step" role="group" aria-labelledby="s1-h">
+      <div class="step-head">
+        <span class="step-n" aria-hidden="true">1</span>
+        <div><h2 id="s1-h" data-i18n="s1h">Select the schools</h2><p data-i18n="s1p">Select one or more schools.</p></div>
+      </div>
+      <div class="quick" id="quick"></div>
+      <div class="pick-group"><h3 data-i18n="grpHdp">In Hoofddorp</h3><div class="pick-grid" id="pick-hdp"></div></div>
+      <div class="pick-group"><h3 data-i18n="grpNear">Near Hoofddorp (from the Klavertje Vier report)</h3><div class="pick-grid" id="pick-near"></div></div>
+    </div>
+    <div class="step" role="group" aria-labelledby="s2-h">
+      <div class="step-head">
+        <span class="step-n" aria-hidden="true">2</span>
+        <div><h2 id="s2-h" data-i18n="s2h">Select the period</h2><p data-i18n="s2p">Select a period, or type your own dates.</p></div>
+      </div>
+      <div class="frow" id="presets" role="radiogroup" aria-labelledby="s2-h"></div>
+      <div class="dates">
+        <label class="field" for="d-from"><span data-i18n="from">From</span><input type="date" id="d-from"></label>
+        <label class="field" for="d-to"><span data-i18n="to">To</span><input type="date" id="d-to"></label>
+      </div>
+      <p class="err" id="d-err" hidden></p>
+    </div>
+    <div class="go">
+      <p class="go-sum" id="go-sum" aria-live="polite"></p>
+      <button type="button" class="btn primary" id="btn-show">Show the events</button>
+    </div>
+  </section>
+
+  <!-- Results: the event list comes first, overview and directory after it -->
+  <div class="results" id="view-results" hidden>
+    <section class="res-head" aria-labelledby="res-h">
+      <div><h2 id="res-h" tabindex="-1"></h2><p class="res-sub" id="res-sub"></p></div>
+      <button type="button" class="btn" id="btn-change" data-i18n="change">Change selection</button>
+    </section>
+
+    <section class="filters" aria-label="Filters">
+      <div class="frow" id="f-levels"></div>
+      <div class="frow">
+        <span class="flabel" data-i18n="fShow">Show</span>
+        <label class="tog"><input type="checkbox" id="f-clash"><span data-i18n="fClash">Hide events in school hours</span></label>
+        <label class="tog"><input type="checkbox" id="f-plan"><span data-i18n="fPlan">Only my plan</span></label>
+        <span class="count" id="count"></span>
+      </div>
+    </section>
+
+    <div class="timeline" id="timeline"></div>
+
+    <section class="period" id="any-sec" aria-labelledby="any-h">
+      <div class="period-head">
+        <h2 id="any-h" data-i18n="anyH">Any day, by appointment</h2>
+        <p data-i18n="anyP">These schools also give a personal visit. You select the date with the school.</p>
+      </div>
+      <div class="anytime" id="anytime"></div>
+    </section>
+
+    <section class="season" aria-labelledby="season-h">
+      <div class="season-head">
+        <h2 id="season-h" data-i18n="stripH">The period by week number</h2>
+        <div class="legend" id="legend"></div>
+      </div>
+      <div class="strip-scroll" id="strip-scroll">
+        <div class="months" id="months"></div>
+        <div class="strip" id="strip"></div>
+      </div>
+    </section>
+
+    <section class="schools" aria-labelledby="schools-h">
+      <h2 id="schools-h" data-i18n="schoolsH">The selected schools</h2>
+      <div class="sgroup" id="g-hdp"><h3 data-i18n="grpHdp">In Hoofddorp</h3><div class="sgrid" id="s-hdp"></div></div>
+      <div class="sgroup" id="g-near"><h3 data-i18n="grpNear">Near Hoofddorp (from the Klavertje Vier report)</h3><div class="sgrid" id="s-near"></div></div>
+    </section>
+
+    <section class="notes" aria-labelledby="notes-h">
+      <h2 id="notes-h" data-i18n="notesH">Before you go</h2>
+      <ul id="notes"></ul>
+      <div class="sources">
+        <b data-i18n="sources">Sources</b> (<span id="src-checked"></span>)
+        <ul id="sources"></ul>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // build.py replaces the next line with the content of open_days/data/site.json
+  var DATA = {"checked":"2026-10-24","season":{"label":"2026–27","start":"2026-08-01","end":"2027-07-31"},"periods":[{"id":"autumn","title":"Coming weeks: autumn 2026","from":"2026-08-01","to":"2026-12-31","intro":"Trial lessons, masterclasses and information evenings. Most of them need registration and have a maximum number of places.","short":"Autumn 2026","nl":{"short":"Herfst 2026","title":"Komende weken: herfst 2026","intro":"Proeflessen, masterclasses en informatieavonden. Voor de meeste moet je je aanmelden. Het aantal plaatsen is beperkt."}},{"id":"season","title":"Main open-day season: early 2027","from":"2027-01-01","to":"2027-07-31","intro":"Most open days are in weeks 4 to 7. Many of them are walk-in. Some schools have two open days. You only need to visit one of them.","short":"Early 2027","nl":{"short":"Begin 2027","title":"Hoofdseizoen van de open dagen: begin 2027","intro":"De meeste open dagen zijn in week 4 tot en met 7. Bij veel daarvan is de inloop vrij. Sommige scholen hebben twee open dagen. Je hoeft er maar één te bezoeken."}}],"schools":{"hlmlT":{"name":"Haarlemmermeer Lyceum Tweetalig","short":"HLML Tweetalig","town":"Hoofddorp","area":"hdp","addr":"Baron de Coubertinlaan 2, Hoofddorp","levels":["mavo","havo","vwo"],"about":"Bilingual education (tto) at mavo, havo and vwo. Topsport Talentschool. The same building has the Optimist International Academy (fully in English) and an NT2 programme for pupils who speak little Dutch.","url":"https://haarlemmermeerlyceum.nl/ik-zit-in-groep-8/","nl":{"about":"Tweetalig onderwijs (tto) op mavo, havo en vwo. Topsport Talentschool. In hetzelfde gebouw zitten de Optimist International Academy (volledig in het Engels) en een NT2-programma voor leerlingen die weinig Nederlands spreken."}},"hlmlD":{"name":"Haarlemmermeer Lyceum Dalton (Zuidrand)","short":"HLML Dalton","town":"Hoofddorp","area":"hdp","addr":"Nieuwe Molenaarslaan 20, Hoofddorp","levels":["havo","vwo"],"about":"Dalton education: pupils plan part of their own work and learn to work independently. The school also has the Studium Excellentie programme.","url":"https://haarlemmermeerlyceum.nl/ik-zit-in-groep-8/","nl":{"about":"Daltononderwijs: leerlingen plannen een deel van hun eigen werk en leren zelfstandig werken. De school heeft ook het programma Studium Excellentie."}},"ksh":{"name":"KSH (Katholieke Scholengemeenschap Hoofddorp)","short":"KSH","town":"Hoofddorp","area":"hdp","addr":"Assumburg 10, Hoofddorp","levels":["mavo","havo","vwo"],"about":"Mavo, havo, vwo and gymnasium (with vwo+). Themaklassen, an 80-minute timetable and leerpleinen.","url":"https://kshhoofddorp.nl/groep-7-8/","nl":{"about":"Mavo, havo, vwo en gymnasium (met vwo+). Themaklassen, een rooster met lessen van 80 minuten en leerpleinen."}},"kaj":{"name":"Kaj Munk College","short":"Kaj Munk","town":"Hoofddorp","area":"hdp","addr":"Kaj Munkweg 3, Hoofddorp","levels":["mavo","havo","vwo"],"about":"Mavo, havo and vwo. Three masterclass afternoons and two open days.","url":"https://kajmunk.nl/kom-kennismaken/","nl":{"about":"Mavo, havo en vwo. Drie middagen met masterclasses en twee open dagen."}},"avantis":{"name":"Avantis College","short":"Avantis","town":"Hoofddorp","area":"hdp","addr":"Rietvoornlaan 1, Hoofddorp","levels":["vbk","mavo"],"about":"Vmbo (basis, kader, gemengd, tl/mavo) and ISK. The Expeditie form also accepts a mavo/havo advice. Like the Haarlemmermeer Lyceum, it is a location of Solyvius College. Your report calls it “Alvantis”.","url":"https://www.avantiscollege.nl/","nl":{"about":"Vmbo (basis, kader, gemengd, tl/mavo) en ISK. Het formulier voor Expeditie accepteert ook een mavo/havo-advies. Net als het Haarlemmermeer Lyceum is het een locatie van Solyvius College. Het rapport van Klavertje Vier noemt de school “Alvantis”."}},"rietland":{"name":"Rietland College","short":"Rietland","town":"Hoofddorp","area":"hdp","addr":"Rietvoornlaan 5, Hoofddorp","levels":["pro","vbk"],"about":"Praktijkonderwijs and vmbo basis. Small classes. For pupils with the advice praktijkonderwijs or vmbo basis.","url":"https://www.rietlandcollege.nl/starten/ik-zit-in-groep-7-8/","nl":{"about":"Praktijkonderwijs en vmbo basis. Kleine klassen. Voor leerlingen met het advies praktijkonderwijs of vmbo basis."}},"hvc":{"name":"Herbert Vissers College","short":"HVC","town":"Nieuw-Vennep","area":"near","addr":"Noorderdreef 175 and Beurtschipper 200, Nieuw-Vennep","levels":["vbk","mavo","havo","vwo"],"about":"Vmbo, mavo, havo, vwo and the HVX programme. Same municipality as Hoofddorp (Haarlemmermeer).","url":"https://www.hvc.nl/groep-7-en-8/","nl":{"addr":"Noorderdreef 175 en Beurtschipper 200, Nieuw-Vennep","about":"Vmbo, mavo, havo, vwo en het HVX-programma. Dezelfde gemeente als Hoofddorp (Haarlemmermeer)."}},"hageveld":{"name":"Atheneum College Hageveld","short":"Hageveld","town":"Heemstede","area":"near","addr":"Hageveld 15, Heemstede","levels":["vwo"],"about":"Vwo only: atheneum and gymnasium. VIA Hageveld is a full-time track for vwo pupils who can do more and want to learn in a different way.","url":"https://www.hageveld.nl/Groep-8","nl":{"about":"Alleen vwo: atheneum en gymnasium. VIA Hageveld is een voltijds traject voor vwo-leerlingen die meer kunnen en op een andere manier willen leren."}},"hbm":{"name":"Haemstede-Barger Mavo","short":"Haemstede-Barger","town":"Heemstede","area":"near","addr":"Koediefslaan 73, Heemstede","levels":["mavo"],"about":"A mavo (vmbo-t) school only. Small and structured.","url":"https://dehbm.nl/nieuwe-leerlingen/welkom-groep-8/","nl":{"about":"Alleen mavo (vmbo-t). Een kleine school met veel structuur."}},"coornhert":{"name":"Coornhert Lyceum","short":"Coornhert","town":"Haarlem","area":"near","addr":"Lyceumlaan 1, Haarlem","levels":["mavo","havo","vwo"],"about":"Mavo, havo, atheneum and gymnasium. Technasium, Kunst & Cultuur and Duurzaam Ontwerpen programmes. Specials have a maximum of 25 places.","url":"https://www.coornhert.nl/welkom-op-het-coornhert/","nl":{"about":"Mavo, havo, atheneum en gymnasium. De programma's Technasium, Kunst & Cultuur en Duurzaam Ontwerpen. Specials hebben maximaal 25 plaatsen."}}},"events":[{"id":"hageveld-2026-10-28-hageveld-experience","d":"2026-10-28","t":"14:30","e":"16:30","s":"hageveld","type":"trial","title":"Hageveld Experience (1 of 3)","lv":["vwo"],"desc":"A tour and a 45-minute trial lesson in a subject that your child selects. Parents: coffee from 14:30, presentation in the aula at 15:15.","reg":"yes","how":"Online form. Maximum two afternoons for each pupil.","url":"https://www.hageveld.nl/Groep-8/Experience","nl":{"title":"Hageveld Experience (1 van 3)","desc":"Een rondleiding en een proefles van 45 minuten in een vak dat je kind kiest. Ouders: koffie vanaf 14:30, presentatie in de aula om 15:15.","how":"Online formulier. Maximaal twee middagen per leerling."}},{"id":"coornhert-2026-10-28-coornhert-special-kunst","d":"2026-10-28","t":"19:00","e":"20:30","s":"coornhert","type":"trial","title":"Coornhert Special: Kunst & Cultuur or Gymnasium","desc":"An evening about one special programme. Maximum 25 places for each Special.","reg":"yes","how":"Form for each Special","url":"https://www.coornhert.nl/masterclasses2627/","nl":{"title":"Coornhert Special: Kunst & Cultuur of Gymnasium","desc":"Een avond over één speciaal programma. Maximaal 25 plaatsen per Special.","how":"Formulier per Special"}},{"id":"hvc-2026-11-03-information-evening-workshops","d":"2026-11-03","t":"19:00","e":"20:30","s":"hvc","type":"info","title":"Information evening + workshops","desc":"Information for parents of groep 8. Pupils follow three short lessons. Doors open at 18:45. The school says: “Vol = vol” (full is full).","reg":"yes","how":"Online form","url":"https://www.hvc.nl/groep-7-en-8/","nl":{"title":"Informatieavond + workshops","desc":"Informatie voor ouders van groep 8. Leerlingen volgen drie korte lessen. De deuren gaan om 18:45 open. De school zegt: “Vol = vol”.","how":"Online formulier"}},{"id":"coornhert-2026-11-04-masterclass","d":"2026-11-04","s":"coornhert","type":"trial","title":"Masterclass (havo/vwo advice)","lv":["havo","vwo"],"desc":"Open lesson afternoon. Select the date that matches the provisional advice. Maximum 150 places.","reg":"yes","how":"Form for each date","url":"https://www.coornhert.nl/masterclasses2627/","nl":{"title":"Masterclass (havo/vwo-advies)","desc":"Open lesmiddag. Kies de datum die past bij het voorlopig advies. Maximaal 150 plaatsen.","how":"Formulier per datum"}},{"id":"coornhert-2026-11-09-coornhert-special-duurzaam","d":"2026-11-09","t":"19:00","e":"20:30","s":"coornhert","type":"trial","title":"Coornhert Special: Duurzaam Ontwerpen or Technasium","desc":"An evening about one special programme. Maximum 25 places for each Special.","reg":"yes","how":"Form for each Special","url":"https://www.coornhert.nl/masterclasses2627/","nl":{"title":"Coornhert Special: Duurzaam Ontwerpen of Technasium","desc":"Een avond over één speciaal programma. Maximaal 25 plaatsen per Special.","how":"Formulier per Special"}},{"id":"hlmlD-2026-11-11-proeflesjes-dalton-studium","d":"2026-11-11","t":"15:00","e":"17:00","s":"hlmlD","type":"trial","title":"Proeflesjes Dalton + Studium Excellentie","desc":"Trial lessons for groep 8 pupils.","reg":"yes","how":"Online form","url":"https://forms.cloud.microsoft/e/e21Z7rQbHH","nl":{"title":"Proeflesjes Dalton + Studium Excellentie","desc":"Proeflessen voor leerlingen van groep 8.","how":"Online formulier"}},{"id":"hvc-2026-11-16-hvx-introduction-afternoon","d":"2026-11-16","t":"15:00","e":"16:30","s":"hvc","type":"trial","title":"HVX introduction afternoon (kennismakingsmiddag)","desc":"An afternoon about the HVX programme.","reg":"tbd","nl":{"title":"HVX-kennismakingsmiddag","desc":"Een middag over het HVX-programma."}},{"id":"hbm-2026-11-18-proeflessen","d":"2026-11-18","t":"13:45","e":"16:00","s":"hbm","type":"trial","title":"Proeflessen (1 of 2)","lv":["mavo"],"desc":"Trial lessons for groep 8 pupils with an expected vmbo-t advice.","reg":"yes","how":"Reservation tool on the school page","url":"https://dehbm.nl/nieuwe-leerlingen/welkom-groep-8/proeflessen/","nl":{"title":"Proeflessen (1 van 2)","desc":"Proeflessen voor leerlingen van groep 8 met een verwacht vmbo-t-advies.","how":"Reserveringstool op de schoolpagina"}},{"id":"hageveld-2026-11-18-via-experience","d":"2026-11-18","t":"14:00","e":"16:00","s":"hageveld","type":"trial","title":"VIA Experience (1 of 2)","lv":["vwo"],"desc":"A group assignment and a short tour. For pupils who want to see if VIA Hageveld fits them.","reg":"yes","how":"E-mail via@hageveld.nl (one afternoon)","url":"https://www.hageveld.nl/Groep-8/Experience","leave":true,"nl":{"title":"VIA Experience (1 van 2)","desc":"Een groepsopdracht en een korte rondleiding. Voor leerlingen die willen zien of VIA Hageveld bij hen past.","how":"E-mail via@hageveld.nl (één middag)"}},{"id":"hageveld-2026-11-18-information-evening-via","d":"2026-11-18","t":"19:30","e":"22:00","s":"hageveld","type":"info","title":"Information evening VIA Hageveld","lv":["vwo"],"desc":"For parents only.","reg":"no","url":"https://www.hageveld.nl/Groep-8/Open-dag","nl":{"title":"Informatieavond VIA Hageveld","desc":"Alleen voor ouders."}},{"id":"kaj-2026-11-20-masterclass-registration-opens","d":"2026-11-20","s":"kaj","type":"reg","title":"Masterclass registration opens","desc":"The form for the three masterclasses (27 Jan, 2 Feb, 4 Mar) goes online today.","reg":"yes","how":"Form on the school page","url":"https://kajmunk.nl/kom-kennismaken/","nl":{"title":"Aanmelding voor de masterclasses opent","desc":"Vandaag komt het formulier voor de drie masterclasses (27 jan, 2 feb, 4 mrt) online.","how":"Formulier op de schoolpagina"}},{"id":"hageveld-2026-12-01-hageveld-experience","d":"2026-12-01","t":"14:30","e":"16:30","s":"hageveld","type":"trial","title":"Hageveld Experience (2 of 3)","lv":["vwo"],"desc":"A tour and a 45-minute trial lesson in a subject that your child selects. Parents: presentation at 15:15.","reg":"yes","how":"Online form. Maximum two afternoons for each pupil.","url":"https://www.hageveld.nl/Groep-8/Experience","nl":{"title":"Hageveld Experience (2 van 3)","desc":"Een rondleiding en een proefles van 45 minuten in een vak dat je kind kiest. Ouders: presentatie om 15:15.","how":"Online formulier. Maximaal twee middagen per leerling."}},{"id":"coornhert-2026-12-01-coornhert-special-kunst","d":"2026-12-01","t":"19:00","e":"20:30","s":"coornhert","type":"trial","title":"Coornhert Special: Kunst & Cultuur or Gymnasium","desc":"An evening about one special programme. Maximum 25 places for each Special.","reg":"yes","how":"Form for each Special","url":"https://www.coornhert.nl/masterclasses2627/","nl":{"title":"Coornhert Special: Kunst & Cultuur of Gymnasium","desc":"Een avond over één speciaal programma. Maximaal 25 plaatsen per Special.","how":"Formulier per Special"}},{"id":"hvc-2026-12-02-masterclasses","d":"2026-12-02","t":"15:00","e":"16:30","s":"hvc","type":"trial","title":"Masterclasses (round 1)","desc":"For pupils with a vmbo, mavo, havo or vwo advice.","reg":"tbd","nl":{"title":"Masterclasses (ronde 1)","desc":"Voor leerlingen met een vmbo-, mavo-, havo- of vwo-advies."}},{"id":"hbm-2026-12-08-open-ouderavond","d":"2026-12-08","t":"19:00","e":"20:00","s":"hbm","type":"info","title":"Open ouderavond","lv":["mavo"],"desc":"Walk-in information evening for parents of groep 8 pupils.","reg":"yes","how":"Online form","url":"https://forms.cloud.microsoft/e/CiP9TgyGpm","nl":{"title":"Open ouderavond","desc":"Informatieavond met vrije inloop voor ouders van leerlingen in groep 8.","how":"Online formulier"}},{"id":"coornhert-2026-12-09-masterclass","d":"2026-12-09","s":"coornhert","type":"trial","title":"Masterclass (havo/vwo or mavo/havo advice)","lv":["mavo","havo","vwo"],"desc":"Open lesson afternoon. Two groups on this date: havo/vwo and mavo/havo. Maximum 150 places for each group.","reg":"yes","how":"Form for each date","url":"https://www.coornhert.nl/masterclasses2627/","nl":{"title":"Masterclass (havo/vwo- of mavo/havo-advies)","desc":"Open lesmiddag. Twee groepen op deze datum: havo/vwo en mavo/havo. Maximaal 150 plaatsen per groep.","how":"Formulier per datum"}},{"id":"avantis-2027-01-11-expeditie-avantis","d":"2027-01-11","t":"14:45","e":"16:00","s":"avantis","type":"trial","title":"Expeditie Avantis (1 of 3)","desc":"An afternoon programme for groep 8 pupils. The form asks for the provisional advice.","reg":"yes","how":"Online form","url":"https://www.avantiscollege.nl/inschrijven-expeditie-avantis/","nl":{"title":"Expeditie Avantis (1 van 3)","desc":"Een middagprogramma voor leerlingen van groep 8. Het formulier vraagt naar het voorlopig advies.","how":"Online formulier"}},{"id":"hlmlD-2027-01-11-information-evening-dalton","d":"2027-01-11","t":"19:00","e":"20:30","s":"hlmlD","type":"info","title":"Information evening Dalton","desc":"For parents and pupils. Pupils follow Dalton and Studium Excellentie trial lessons.","reg":"ns","nl":{"title":"Informatieavond Dalton","desc":"Voor ouders en leerlingen. Leerlingen volgen proeflessen Dalton en Studium Excellentie."}},{"id":"hlmlT-2027-01-13-information-evening-for","d":"2027-01-13","t":"19:00","e":"20:30","s":"hlmlT","type":"info","title":"Information evening for international students (in English)","desc":"For parents of pupils who do not speak Dutch. The presentation is in English, at the school.","reg":"ns","nl":{"title":"Informatieavond voor internationale leerlingen (in het Engels)","desc":"Voor ouders van leerlingen die geen Nederlands spreken. De presentatie is in het Engels, op school."}},{"id":"coornhert-2027-01-14-coornhert-special-technasium","d":"2027-01-14","t":"19:00","e":"20:30","s":"coornhert","type":"trial","title":"Coornhert Special: Technasium or Duurzaam Ontwerpen","desc":"An evening about one special programme. Maximum 25 places for each Special.","reg":"yes","how":"Form for each Special","url":"https://www.coornhert.nl/masterclasses2627/","nl":{"title":"Coornhert Special: Technasium of Duurzaam Ontwerpen","desc":"Een avond over één speciaal programma. Maximaal 25 plaatsen per Special.","how":"Formulier per Special"}},{"id":"coornhert-2027-01-20-masterclass","d":"2027-01-20","s":"coornhert","type":"trial","title":"Masterclass (havo/vwo advice)","lv":["havo","vwo"],"desc":"Open lesson afternoon. Maximum 150 places.","reg":"yes","how":"Form for each date","url":"https://www.coornhert.nl/masterclasses2627/","nl":{"title":"Masterclass (havo/vwo-advies)","desc":"Open lesmiddag. Maximaal 150 plaatsen.","how":"Formulier per datum"}},{"id":"ksh-2027-01-20-information-evening-for","d":"2027-01-20","t":"19:30","e":"21:15","s":"ksh","type":"info","title":"Information evening for parents","desc":"Questions about the brugklas, extra support and the themaklassen. Short presentations about each theme.","reg":"no","nl":{"title":"Informatieavond voor ouders","desc":"Vragen over de brugklas, extra ondersteuning en de themaklassen. Korte presentaties over elk thema."}},{"id":"hlmlT-2027-01-25-information-evening-tweetalig","d":"2027-01-25","t":"19:00","e":"20:30","s":"hlmlT","type":"info","title":"Information evening Tweetalig","desc":"For parents and groep 8 pupils. Parents: presentation in Dutch. Pupils: trial lessons.","reg":"ns","nl":{"title":"Informatieavond Tweetalig","desc":"Voor ouders en leerlingen van groep 8. Ouders: presentatie in het Nederlands. Leerlingen: proeflessen."}},{"id":"avantis-2027-01-26-information-evening","d":"2027-01-26","t":"19:00","e":"20:30","s":"avantis","type":"info","title":"Information evening","desc":"Information about the school for parents and pupils.","reg":"yes","how":"Online form","url":"https://www.avantiscollege.nl/inschrijven-informatieavond","nl":{"title":"Informatieavond","desc":"Informatie over de school voor ouders en leerlingen.","how":"Online formulier"}},{"id":"rietland-2027-01-27-voorlichtingsmiddag","d":"2027-01-27","t":"15:00","e":"16:00","s":"rietland","type":"info","title":"Voorlichtingsmiddag","desc":"Information afternoon for parents of groep 8 pupils.","reg":"ns","url":"https://www.rietlandcollege.nl/starten/kennismaken/","nl":{"title":"Voorlichtingsmiddag","desc":"Informatiemiddag voor ouders van leerlingen in groep 8."}},{"id":"kaj-2027-01-27-masterclass-1","d":"2027-01-27","t":"15:15","e":"17:00","s":"kaj","type":"trial","title":"Masterclass 1","desc":"Afternoon of lessons for groep 7/8 pupils.","reg":"yes","how":"Form online from 20 Nov 2026","url":"https://kajmunk.nl/kom-kennismaken/","nl":{"title":"Masterclass 1","desc":"Een middag met lessen voor leerlingen van groep 7/8.","how":"Formulier online vanaf 20 nov 2026"}},{"id":"ksh-2027-01-28-open-day-1","d":"2027-01-28","t":"16:00","e":"20:00","s":"ksh","type":"open","title":"Open day 1","desc":"Tour of the school, trial lessons and workshops, presentations about the brugklas and the themaklassen.","reg":"no","nl":{"title":"Open dag 1","desc":"Rondleiding door de school, proeflessen en workshops, presentaties over de brugklas en de themaklassen."}},{"id":"ksh-2027-01-29-open-day-2","d":"2027-01-29","t":"16:00","e":"20:00","s":"ksh","type":"open","title":"Open day 2","desc":"Same programme as open day 1.","reg":"no","nl":{"title":"Open dag 2","desc":"Hetzelfde programma als open dag 1."}},{"id":"kaj-2027-02-02-masterclass-2","d":"2027-02-02","t":"15:15","e":"17:00","s":"kaj","type":"trial","title":"Masterclass 2","desc":"Afternoon of lessons for groep 7/8 pupils.","reg":"yes","how":"Form online from 20 Nov 2026","url":"https://kajmunk.nl/kom-kennismaken/","nl":{"title":"Masterclass 2","desc":"Een middag met lessen voor leerlingen van groep 7/8.","how":"Formulier online vanaf 20 nov 2026"}},{"id":"kaj-2027-02-02-information-evening","d":"2027-02-02","t":"19:00","e":"21:00","s":"kaj","type":"info","title":"Information evening","desc":"For parents of pupils in groep 7 and 8.","reg":"no","nl":{"title":"Informatieavond","desc":"Voor ouders van leerlingen in groep 7 en 8."}},{"id":"avantis-2027-02-03-expeditie-avantis","d":"2027-02-03","t":"14:45","e":"16:00","s":"avantis","type":"trial","title":"Expeditie Avantis (2 of 3)","desc":"An afternoon programme for groep 8 pupils.","reg":"yes","how":"Online form","url":"https://www.avantiscollege.nl/inschrijven-expeditie-avantis/","nl":{"title":"Expeditie Avantis (2 van 3)","desc":"Een middagprogramma voor leerlingen van groep 8.","how":"Online formulier"}},{"id":"hvc-2027-02-04-open-day-1","d":"2027-02-04","t":"16:00","e":"20:00","s":"hvc","type":"open","title":"Open day 1","desc":"For parents and pupils.","reg":"tbd","nl":{"title":"Open dag 1","desc":"Voor ouders en leerlingen."}},{"id":"hbm-2027-02-05-open-day","d":"2027-02-05","t":"15:00","e":"19:00","s":"hbm","type":"open","title":"Open day","lv":["mavo"],"desc":"Open day for groep 8 pupils and parents.","reg":"no","nl":{"title":"Open dag","desc":"Open dag voor leerlingen van groep 8 en hun ouders."}},{"id":"hvc-2027-02-05-open-day-2","d":"2027-02-05","t":"16:00","e":"20:00","s":"hvc","type":"open","title":"Open day 2","desc":"For parents and pupils.","reg":"tbd","nl":{"title":"Open dag 2","desc":"Voor ouders en leerlingen."}},{"id":"hageveld-2027-02-06-open-day","d":"2027-02-06","t":"08:30","e":"13:00","s":"hageveld","type":"open","title":"Open day (Saturday)","lv":["vwo"],"desc":"For pupils together with their parents.","reg":"ns","url":"https://www.hageveld.nl/Groep-8/Open-dag","nl":{"title":"Open dag (zaterdag)","desc":"Voor leerlingen samen met hun ouders."}},{"id":"coornhert-2027-02-10-masterclass","d":"2027-02-10","s":"coornhert","type":"trial","title":"Masterclass (havo/vwo or mavo/havo advice)","lv":["mavo","havo","vwo"],"desc":"Open lesson afternoon. Two groups on this date: havo/vwo and mavo/havo. Maximum 150 places for each group.","reg":"yes","how":"Form for each date","url":"https://www.coornhert.nl/masterclasses2627/","nl":{"title":"Masterclass (havo/vwo- of mavo/havo-advies)","desc":"Open lesmiddag. Twee groepen op deze datum: havo/vwo en mavo/havo. Maximaal 150 plaatsen per groep.","how":"Formulier per datum"}},{"id":"hageveld-2027-02-10-via-experience","d":"2027-02-10","t":"14:00","e":"16:00","s":"hageveld","type":"trial","title":"VIA Experience (2 of 2)","lv":["vwo"],"desc":"A group assignment and a short tour. For pupils who want to see if VIA Hageveld fits them.","reg":"yes","how":"E-mail via@hageveld.nl (one afternoon)","url":"https://www.hageveld.nl/Groep-8/Experience","leave":true,"nl":{"title":"VIA Experience (2 van 2)","desc":"Een groepsopdracht en een korte rondleiding. Voor leerlingen die willen zien of VIA Hageveld bij hen past.","how":"E-mail via@hageveld.nl (één middag)"}},{"id":"hlmlD-2027-02-10-open-huis","d":"2027-02-10","t":"15:00","e":"21:00","two":"15:00–17:00 and 18:30–21:00","s":"hlmlD","type":"open","title":"Open huis","desc":"Open house in two parts: afternoon and evening.","reg":"ns","nl":{"title":"Open huis","desc":"Open huis in twee delen: middag en avond."}},{"id":"hageveld-2027-02-10-information-evening-via","d":"2027-02-10","t":"19:30","e":"22:00","s":"hageveld","type":"info","title":"Information evening VIA Hageveld","lv":["vwo"],"desc":"For parents only. Same programme as on 18 November.","reg":"no","url":"https://www.hageveld.nl/Groep-8/Open-dag","nl":{"title":"Informatieavond VIA Hageveld","desc":"Alleen voor ouders. Hetzelfde programma als op 18 november."}},{"id":"kaj-2027-02-11-open-day-1","d":"2027-02-11","t":"19:00","e":"21:30","s":"kaj","type":"open","title":"Open day 1 (evening)","desc":"Walk-in. No registration.","reg":"no","nl":{"title":"Open dag 1 (avond)","desc":"Vrije inloop. Je hoeft je niet aan te melden."}},{"id":"kaj-2027-02-12-open-day-2","d":"2027-02-12","t":"16:00","e":"19:00","s":"kaj","type":"open","title":"Open day 2 (afternoon)","desc":"Walk-in. No registration.","reg":"no","nl":{"title":"Open dag 2 (middag)","desc":"Vrije inloop. Je hoeft je niet aan te melden."}},{"id":"hvc-2027-02-15-hvx-meeloopmiddag","d":"2027-02-15","t":"15:00","e":"16:30","s":"hvc","type":"trial","title":"HVX meeloopmiddag (1 of 2)","desc":"Pupils join HVX lessons for an afternoon.","reg":"tbd","nl":{"title":"HVX-meeloopmiddag (1 van 2)","desc":"Leerlingen volgen een middag lessen van HVX."}},{"id":"avantis-2027-02-16-expeditie-avantis","d":"2027-02-16","t":"14:45","e":"16:00","s":"avantis","type":"trial","title":"Expeditie Avantis (3 of 3)","desc":"An afternoon programme for groep 8 pupils.","reg":"yes","how":"Online form","url":"https://www.avantiscollege.nl/inschrijven-expeditie-avantis/","nl":{"title":"Expeditie Avantis (3 van 3)","desc":"Een middagprogramma voor leerlingen van groep 8.","how":"Online formulier"}},{"id":"hbm-2027-02-17-proeflessen","d":"2027-02-17","t":"13:45","e":"16:00","s":"hbm","type":"trial","title":"Proeflessen (2 of 2)","lv":["mavo"],"desc":"Trial lessons for groep 8 pupils with an expected vmbo-t advice.","reg":"yes","how":"Reservation tool on the school page","url":"https://dehbm.nl/nieuwe-leerlingen/welkom-groep-8/proeflessen/","nl":{"title":"Proeflessen (2 van 2)","desc":"Proeflessen voor leerlingen van groep 8 met een verwacht vmbo-t-advies.","how":"Reserveringstool op de schoolpagina"}},{"id":"hageveld-2027-02-17-hageveld-experience","d":"2027-02-17","t":"14:30","e":"16:30","s":"hageveld","type":"trial","title":"Hageveld Experience (3 of 3)","lv":["vwo"],"desc":"A tour and a 45-minute trial lesson in a subject that your child selects. Parents: presentation at 15:15.","reg":"yes","how":"Online form. Maximum two afternoons for each pupil.","url":"https://www.hageveld.nl/Groep-8/Experience","nl":{"title":"Hageveld Experience (3 van 3)","desc":"Een rondleiding en een proefles van 45 minuten in een vak dat je kind kiest. Ouders: presentatie om 15:15.","how":"Online formulier. Maximaal twee middagen per leerling."}},{"id":"hlmlT-2027-02-17-open-huis-tweetalig","d":"2027-02-17","t":"15:00","e":"20:30","two":"15:00–17:00 and 18:30–20:30","s":"hlmlT","type":"open","title":"Open huis Tweetalig","desc":"Open house in two parts: afternoon and evening.","reg":"ns","nl":{"title":"Open huis Tweetalig","desc":"Open huis in twee delen: middag en avond."}},{"id":"hvc-2027-03-01-hvx-meeloopmiddag","d":"2027-03-01","t":"15:00","e":"16:30","s":"hvc","type":"trial","title":"HVX meeloopmiddag (2 of 2)","desc":"Pupils join HVX lessons for an afternoon.","reg":"tbd","nl":{"title":"HVX-meeloopmiddag (2 van 2)","desc":"Leerlingen volgen een middag lessen van HVX."}},{"id":"avantis-2027-03-02-open-huis","d":"2027-03-02","t":"15:00","e":"20:00","s":"avantis","type":"open","title":"Open huis","desc":"Open house for pupils and parents.","reg":"ns","nl":{"title":"Open huis","desc":"Open huis voor leerlingen en ouders."}},{"id":"rietland-2027-03-02-open-huis","d":"2027-03-02","t":"15:00","e":"20:00","s":"rietland","type":"open","title":"Open huis","desc":"For groep 7 and 8 pupils and parents. Walk-in.","reg":"no","url":"https://www.rietlandcollege.nl/starten/open-huis/","nl":{"title":"Open huis","desc":"Voor leerlingen van groep 7 en 8 en hun ouders. Vrije inloop."}},{"id":"kaj-2027-03-04-masterclass-3","d":"2027-03-04","t":"15:15","e":"17:00","s":"kaj","type":"trial","title":"Masterclass 3","desc":"Afternoon of lessons for groep 7/8 pupils.","reg":"yes","how":"Form online from 20 Nov 2026","url":"https://kajmunk.nl/kom-kennismaken/","nl":{"title":"Masterclass 3","desc":"Een middag met lessen voor leerlingen van groep 7/8.","how":"Formulier online vanaf 20 nov 2026"}},{"id":"hageveld-2027-03-08-information-evening","d":"2027-03-08","t":"20:00","e":"21:00","s":"hageveld","type":"info","title":"Information evening (regular vwo)","lv":["vwo"],"desc":"For parents only.","reg":"no","url":"https://www.hageveld.nl/Groep-8/Open-dag","nl":{"title":"Informatieavond (regulier vwo)","desc":"Alleen voor ouders."}},{"id":"hvc-2027-03-10-masterclasses","d":"2027-03-10","t":"15:00","e":"16:30","s":"hvc","type":"trial","title":"Masterclasses (round 2)","desc":"For pupils with a vmbo, mavo, havo or vwo advice.","reg":"tbd","nl":{"title":"Masterclasses (ronde 2)","desc":"Voor leerlingen met een vmbo-, mavo-, havo- of vwo-advies."}}],"anytime":[{"s":"ksh","title":"Personal meeting or tour","desc":"Possible from the autumn break. You and your child visit the school on a date that you agree with the school.","url":"https://kshhoofddorp.nl/aanmelden-kennismakingsactiviteiten/","link":"Register on the KSH page","nl":{"title":"Persoonlijk gesprek of rondleiding","desc":"Mogelijk vanaf de herfstvakantie. Je bezoekt de school met je kind op een datum die je met de school afspreekt.","link":"Aanmelden op de pagina van KSH"}},{"s":"rietland","title":"Tour by appointment","desc":"Phone (023) 561 21 36 or use the form. The school replies in 1–2 working days.","url":"https://www.rietlandcollege.nl/afspraak-maken/","link":"Appointment form","nl":{"title":"Rondleiding op afspraak","desc":"Bel (023) 561 21 36 of gebruik het formulier. De school antwoordt binnen 1–2 werkdagen.","link":"Afspraakformulier"}}],"notes":[{"b":"Check the date again.","t":"Schools can change a date. Open the school page before you go.","nl":{"b":"Controleer de datum opnieuw.","t":"Scholen kunnen een datum wijzigen. Open de schoolpagina voordat je gaat."}},{"b":"“Registration: not stated”","t":"means that the school page does not say if you must register. If you are not sure, phone or e-mail the school.","nl":{"b":"“Aanmelden: niet vermeld”","t":"betekent dat de schoolpagina niet zegt of je je moet aanmelden. Weet je het niet zeker? Bel of mail dan de school."}},{"b":"“Registration info follows”","t":"means that the school will publish the form later.","nl":{"b":"“Info over aanmelden volgt”","t":"betekent dat de school het formulier later publiceert."}},{"b":"Coornhert Lyceum:","t":"the website shows the masterclasses and the Specials. I did not find an open-day date. The masterclass page gives no time. It calls each masterclass an “open lesmiddag” (an afternoon).","nl":{"b":"Coornhert Lyceum:","t":"de website toont de masterclasses en de Specials. Ik vond geen datum voor een open dag. De pagina met masterclasses geeft geen tijd. Elke masterclass heet daar een “open lesmiddag” (een middag)."}},{"b":"Rietland College:","t":"one page still shows the old date 5 March 2026. The open-house page gives 2 March 2027. This page uses 2 March 2027.","nl":{"b":"Rietland College:","t":"één pagina toont nog de oude datum 5 maart 2026. De pagina over het open huis geeft 2 maart 2027. Deze pagina gebruikt 2 maart 2027."}},{"b":"Corrections to the Klavertje Vier report:","t":"“Alvantis” is Avantis College. Rietland College gives praktijkonderwijs and vmbo basis, not mavo and havo. Atheneum College Hageveld gives vwo only (atheneum and gymnasium).","nl":{"b":"Correcties op het rapport van Klavertje Vier:","t":"“Alvantis” is Avantis College. Rietland College geeft praktijkonderwijs en vmbo basis, geen mavo en havo. Atheneum College Hageveld geeft alleen vwo (atheneum en gymnasium)."}},{"b":"Not on this page:","t":"Yuverta and Fioretti College (outside the central registration), and the International School Hoofddorp (English-language school with a separate admission).","nl":{"b":"Niet op deze pagina:","t":"Yuverta en Fioretti College (buiten de centrale aanmelding), en de International School Hoofddorp (Engelstalige school met een eigen toelating)."}},{"b":"“My plan”","t":"stars, the selected schools and the language stay in this browser only. Other people do not see them.","nl":{"b":"“Mijn plan”:","t":"de sterren, de gekozen scholen en de taal blijven alleen in deze browser. Andere mensen zien ze niet."}}],"sources":[{"label":"Haarlemmermeer Lyceum, groep 8","url":"https://haarlemmermeerlyceum.nl/ik-zit-in-groep-8/"},{"label":"KSH, groep 7-8","url":"https://kshhoofddorp.nl/groep-7-8/"},{"label":"KSH, informatie activiteiten","url":"https://kshhoofddorp.nl/informatie-activiteiten/"},{"label":"Kaj Munk College, kom kennismaken","url":"https://kajmunk.nl/kom-kennismaken/"},{"label":"Avantis College","url":"https://www.avantiscollege.nl/"},{"label":"Rietland College, groep 7-8","url":"https://www.rietlandcollege.nl/starten/ik-zit-in-groep-7-8/"},{"label":"Rietland College, open huis","url":"https://www.rietlandcollege.nl/starten/open-huis/"},{"label":"Herbert Vissers College, groep 7 en 8","url":"https://www.hvc.nl/groep-7-en-8/"},{"label":"Hageveld, open dag","url":"https://www.hageveld.nl/Groep-8/Open-dag"},{"label":"Hageveld, Experience","url":"https://www.hageveld.nl/Groep-8/Experience"},{"label":"Haemstede-Barger, open dagen","url":"https://dehbm.nl/nieuwe-leerlingen/welkom-groep-8/open-dagen/"},{"label":"Haemstede-Barger, proeflessen","url":"https://dehbm.nl/nieuwe-leerlingen/welkom-groep-8/proeflessen/"},{"label":"Coornhert Lyceum, masterclasses 26/27","url":"https://www.coornhert.nl/masterclasses2627/"},{"label":"DUO open data, all vo school locations (CSV)","url":"https://duo.nl/open_onderwijsdata/images/02.-alle-vestigingen-vo.csv","nl":{"label":"DUO open data, alle vo-schoollocaties (CSV)"}}]};
+  var SCHOOLS = DATA.schools, EVENTS = DATA.events, ANYTIME = DATA.anytime, SOURCES = DATA.sources, PERIODS = DATA.periods, SEASON = DATA.season;
+  var SCHOOL_KEYS = Object.keys(SCHOOLS);
+
+  var LEVELS = [
+    { key: "pro", label: "PrO", name: "Praktijkonderwijs" },
+    { key: "vbk", label: "vmbo-b/k", name: "vmbo basis / kader" },
+    { key: "mavo", label: "mavo", name: "vmbo-gt / tl / mavo" },
+    { key: "havo", label: "havo", name: "havo" },
+    { key: "vwo", label: "vwo", name: "vwo" }
+  ];
+
+  // ---------- text in two languages ----------
+  // Data text comes from site.json: an object's "nl" field holds the Dutch version. Without it, the page shows English.
+  var T = {
+    en: {
+      title: "Hoofddorp Open Days 2026–27",
+      brand: "Hoofddorp Open Days",
+      eyebrow: "Groep 8 · RKBS Klavertje Vier · school year 2026–27",
+      h1: "Hoofddorp Open Days",
+      lede: "This page lists the open days, information evenings and trial lessons of all secondary schools in Hoofddorp. It also lists four schools near Hoofddorp from the Klavertje Vier report. All dates come from the school websites. Last check: {date}.",
+      factSchools: "{n} schools", factDates: "{n} dates", factLeft: "{n} still to come", factChecked: "Last check {date}",
+      ruleHead: "Klavertje Vier rule.",
+      ruleText: "The school does not give leave for school visits during school hours. School ends at 14:00. Events that start before 14:00 on a school day have a red mark. Exception: pupils can leave 30 minutes early for the two VIA Hageveld afternoons.",
+      s1h: "Select the schools",
+      s1p: "Select one or more schools. Each school shows the number of its dates in the selected period.",
+      qAll: "All schools", qHdp: "Only Hoofddorp", qNone: "Clear", qLevel: "Schools with:", qLevelTip: "Select all schools with {level}",
+      grpHdp: "In Hoofddorp", grpNear: "Near Hoofddorp (from the Klavertje Vier report)",
+      cnt0: "no dates in this period", cnt1: "1 date in this period", cntN: "{n} dates in this period",
+      s2h: "Select the period", s2p: "Select a period, or type your own dates.",
+      p2w: "Next 2 weeks", pRest: "Everything still to come", pCustom: "Own dates",
+      from: "From", to: "To",
+      errRange: "The start date is after the end date. Change one of the dates.",
+      errDate: "Type a full date in both fields.",
+      needSchool: "Select at least one school.",
+      sum: "{events} at {schools}, {range}.",
+      sum0: "The selected schools have no events in this period. Select a longer period or more schools.",
+      show: "Show the events", showN: "Show {events}",
+      ev1: "1 event", evN: "{n} events", sc1: "1 school", scN: "{n} schools",
+      change: "Change selection",
+      resTitle: "{events} in your selection", resTitle0: "No coming events in your selection",
+      resReg: "{n} of them need registration. Register early, because places are limited.",
+      stripH: "The period by week number", weekTip: "Week {w}: {events}",
+      legTrial: "Trial lesson / masterclass",
+      fLevel: "Level", fShow: "Show", fClash: "Hide events in school hours", fPlan: "Only my plan",
+      count: "Showing {a} of {b} coming events",
+      week: "week {w}", thisWeek: "this week",
+      emptyPeriod: "No events match the filters in this period.",
+      past1: "1 past event is not shown.", pastN: "{n} past events are not shown.",
+      anyH: "Any day, by appointment", anyP: "These schools also give a personal visit. You select the date with the school.",
+      schoolsH: "The selected schools",
+      scMeta: "{left} of {total} dates to come", scNext: "next: {date}", scLink: "School page for groep 8",
+      notesH: "Before you go", sources: "Sources", lastCheck: "last check: {date}",
+      tInfo: "Information evening", tOpen: "Open day", tTrial: "Trial lesson", tReg: "Registration opens",
+      regYes: "Register", regNo: "Walk-in, no registration", regTbd: "Registration info follows", regNs: "Registration: not stated",
+      clash: "Starts {t}: in school hours", leave: "Klavertje Vier: leave 30 min early",
+      allDay: "all day", afternoon: "afternoon", noTime: "time not stated", and: "and",
+      today: "today", tomorrow: "tomorrow", inDays: "in {n} days", past: "past",
+      starAdd: "Add {x} to my plan", starTitle: "My plan",
+      days: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+      months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+      monthsLong: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    },
+    nl: {
+      title: "Open dagen Hoofddorp 2026–27",
+      brand: "Open dagen Hoofddorp",
+      eyebrow: "Groep 8 · RKBS Klavertje Vier · schooljaar 2026–27",
+      h1: "Open dagen Hoofddorp",
+      lede: "Deze pagina toont de open dagen, informatieavonden en proeflessen van alle middelbare scholen in Hoofddorp. Ook staan er vier scholen bij Hoofddorp op, uit het rapport van Klavertje Vier. Alle datums komen van de websites van de scholen. Laatste controle: {date}.",
+      factSchools: "{n} scholen", factDates: "{n} datums", factLeft: "{n} nog te gaan", factChecked: "Laatste controle {date}",
+      ruleHead: "Regel van Klavertje Vier.",
+      ruleText: "De school geeft geen verlof voor schoolbezoek onder schooltijd. De school is om 14:00 uit. Activiteiten die op een schooldag voor 14:00 beginnen, hebben een rode markering. Uitzondering: voor de twee middagen van VIA Hageveld mogen leerlingen 30 minuten eerder weg.",
+      s1h: "Kies de scholen",
+      s1p: "Kies een of meer scholen. Bij elke school staat het aantal datums in de gekozen periode.",
+      qAll: "Alle scholen", qHdp: "Alleen Hoofddorp", qNone: "Wissen", qLevel: "Scholen met:", qLevelTip: "Kies alle scholen met {level}",
+      grpHdp: "In Hoofddorp", grpNear: "Bij Hoofddorp (uit het rapport van Klavertje Vier)",
+      cnt0: "geen datums in deze periode", cnt1: "1 datum in deze periode", cntN: "{n} datums in deze periode",
+      s2h: "Kies de periode", s2p: "Kies een periode, of typ je eigen datums.",
+      p2w: "Komende 2 weken", pRest: "Alles wat nog komt", pCustom: "Eigen datums",
+      from: "Van", to: "Tot en met",
+      errRange: "De begindatum ligt na de einddatum. Pas een van de datums aan.",
+      errDate: "Typ in beide velden een volledige datum.",
+      needSchool: "Kies minstens één school.",
+      sum: "{events} bij {schools}, {range}.",
+      sum0: "De gekozen scholen hebben geen activiteiten in deze periode. Kies een langere periode of meer scholen.",
+      show: "Toon de activiteiten", showN: "Toon {events}",
+      ev1: "1 activiteit", evN: "{n} activiteiten", sc1: "1 school", scN: "{n} scholen",
+      change: "Selectie wijzigen",
+      resTitle: "{events} in jouw selectie", resTitle0: "Geen komende activiteiten in jouw selectie",
+      resReg: "Voor {n} daarvan moet je je aanmelden. Meld je op tijd aan, want het aantal plaatsen is beperkt.",
+      stripH: "De periode per weeknummer", weekTip: "Week {w}: {events}",
+      legTrial: "Proefles / masterclass",
+      fLevel: "Niveau", fShow: "Toon", fClash: "Verberg activiteiten onder schooltijd", fPlan: "Alleen mijn plan",
+      count: "{a} van {b} komende activiteiten zichtbaar",
+      week: "week {w}", thisWeek: "deze week",
+      emptyPeriod: "Geen activiteiten in deze periode die bij de filters passen.",
+      past1: "1 voorbije activiteit is niet zichtbaar.", pastN: "{n} voorbije activiteiten zijn niet zichtbaar.",
+      anyH: "Elke dag, op afspraak", anyP: "Deze scholen geven ook een persoonlijk bezoek. Je kiest de datum samen met de school.",
+      schoolsH: "De gekozen scholen",
+      scMeta: "nog {left} van {total} datums", scNext: "volgende: {date}", scLink: "Schoolpagina voor groep 8",
+      notesH: "Voor je gaat", sources: "Bronnen", lastCheck: "laatste controle: {date}",
+      tInfo: "Informatieavond", tOpen: "Open dag", tTrial: "Proefles", tReg: "Aanmelding opent",
+      regYes: "Aanmelden", regNo: "Vrije inloop, niet aanmelden", regTbd: "Info over aanmelden volgt", regNs: "Aanmelden: niet vermeld",
+      clash: "Begint {t}: onder schooltijd", leave: "Klavertje Vier: 30 min eerder weg",
+      allDay: "hele dag", afternoon: "middag", noTime: "tijd niet vermeld", and: "en",
+      today: "vandaag", tomorrow: "morgen", inDays: "over {n} dagen", past: "voorbij",
+      starAdd: "Zet {x} in mijn plan", starTitle: "Mijn plan",
+      days: ["zo", "ma", "di", "wo", "do", "vr", "za"],
+      months: ["jan", "feb", "mrt", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec"],
+      monthsLong: ["januari", "februari", "maart", "april", "mei", "juni", "juli", "augustus", "september", "oktober", "november", "december"]
+    }
+  };
+  var TYPE_KEY = { info: "tInfo", open: "tOpen", trial: "tTrial", reg: "tReg" };
+
+  var LANG_KEY = "hdp-open-days-lang", SEL_KEY = "hdp-open-days-selection-v1", PLAN_KEY = "hdp-open-days-plan-v1";
+  function load(key) { try { return JSON.parse(localStorage.getItem(key) || "null"); } catch (e) { return null; } }
+  function store(key, v) { try { localStorage.setItem(key, JSON.stringify(v)); } catch (e) { /* storage not available */ } }
+
+  var LANG = load(LANG_KEY);
+  if (LANG !== "en" && LANG !== "nl") LANG = /^nl\b/i.test(navigator.language || "") ? "nl" : "en";
+
+  function t(key, vars) {
+    var s = T[LANG][key] != null ? T[LANG][key] : T.en[key];
+    return vars ? s.replace(/\{(\w+)\}/g, function (m, k) { return vars[k] != null ? vars[k] : m; }) : s;
+  }
+  function tr(obj, key) { return (LANG === "nl" && obj.nl && obj.nl[key]) || obj[key]; }
+  function nEvents(n) { return n === 1 ? t("ev1") : t("evN", { n: n }); }
+  function nSchools(n) { return n === 1 ? t("sc1") : t("scN", { n: n }); }
+
+  // ---------- helpers ----------
+  function parse(isoStr) { var p = isoStr.split("-"); return new Date(+p[0], +p[1] - 1, +p[2]); }
+  function iso(dt) { return dt.getFullYear() + "-" + String(dt.getMonth() + 1).padStart(2, "0") + "-" + String(dt.getDate()).padStart(2, "0"); }
+  function isoWeek(dt) {
+    var d = new Date(Date.UTC(dt.getFullYear(), dt.getMonth(), dt.getDate()));
+    var day = d.getUTCDay() || 7;
+    d.setUTCDate(d.getUTCDate() + 4 - day);
+    var y0 = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    return { w: Math.ceil(((d - y0) / 86400000 + 1) / 7), y: d.getUTCFullYear() };
+  }
+  function monday(dt) { var d = new Date(dt); var k = (d.getDay() + 6) % 7; d.setDate(d.getDate() - k); return d; }
+  function addDays(dt, n) { var d = new Date(dt); d.setDate(d.getDate() + n); return d; }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function dayDiff(a, b) { return Math.round((a - b) / 86400000); }
+  function rel(n) { return n === 0 ? t("today") : n === 1 ? t("tomorrow") : n < 0 ? t("past") : t("inDays", { n: n }); }
+  function fmtLong(isoStr) { var d = parse(isoStr); return d.getDate() + " " + t("monthsLong")[d.getMonth()] + " " + d.getFullYear(); }
+  function fmtShort(d) { return d.getDate() + " " + t("months")[d.getMonth()]; }
+  function fmtRange(a, b) {
+    var da = parse(a), db = parse(b);
+    return (da.getFullYear() === db.getFullYear() ? fmtShort(da) : fmtShort(da) + " " + da.getFullYear()) + " – " + fmtShort(db) + " " + db.getFullYear();
+  }
+  function $(id) { return document.getElementById(id); }
+
+  var now = new Date();
+  var TODAY = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var todayIso = iso(TODAY);
+  // Presets start from today, but never outside the season.
+  var BASE = todayIso < SEASON.start || todayIso > SEASON.end ? SEASON.start : todayIso;
+
+  EVENTS.forEach(function (ev) {
+    ev.date = parse(ev.d);
+    ev.levels = ev.lv || SCHOOLS[ev.s].levels;
+    var wd = ev.date.getDay();
+    ev.clash = !!(ev.t && wd >= 1 && wd <= 5 && ev.t < "14:00");
+    ev.past = ev.d < todayIso;
+    var wk = isoWeek(ev.date); ev.wk = wk.w; ev.wky = wk.y;
+  });
+  EVENTS.sort(function (a, b) { return a.d === b.d ? (a.t || "12:00").localeCompare(b.t || "12:00") : a.d.localeCompare(b.d); });
+  var BY_ID = {};
+  EVENTS.forEach(function (e) { BY_ID[e.id] = e; });
+
+  // ---------- per-viewer state ----------
+  var plan = load(PLAN_KEY) || {};
+  function savePlan() { store(PLAN_KEY, plan); }
+
+  function presets() {
+    var out = [{ id: "2w", from: BASE, to: iso(addDays(parse(BASE), 13)), label: t("p2w") }];
+    PERIODS.forEach(function (p) {
+      if (p.to < BASE) return;
+      out.push({ id: "p-" + p.id, from: p.from > BASE ? p.from : BASE, to: p.to, label: tr(p, "short") || tr(p, "title") });
+    });
+    out.push({ id: "rest", from: BASE, to: SEASON.end, label: t("pRest") });
+    return out;
+  }
+  function findPreset(id) { return presets().filter(function (p) { return p.id === id; })[0]; }
+
+  var saved = load(SEL_KEY) || {};
+  var sel = {
+    schools: (Array.isArray(saved.schools) ? saved.schools : []).filter(function (k) { return SCHOOLS[k]; }),
+    preset: saved.preset || "rest",
+    from: saved.from, to: saved.to
+  };
+  if (sel.preset !== "custom" || !/^\d{4}-\d\d-\d\d$/.test(sel.from || "") || !/^\d{4}-\d\d-\d\d$/.test(sel.to || "")) {
+    var pr = findPreset(sel.preset) || findPreset("rest");
+    sel.preset = pr.id; sel.from = pr.from; sel.to = pr.to;
+  }
+  var filt = { levels: LEVELS.map(function (l) { return l.key; }), hideClash: false, planOnly: false };
+  var view = "setup";
+
+  function rangeOk() { return !!(sel.from && sel.to && sel.from <= sel.to); }
+  function inRange(e) { return e.d >= sel.from && e.d <= sel.to; }
+  function inSel(e) { return sel.schools.indexOf(e.s) >= 0 && inRange(e); }
+  function selectedKeys() { return SCHOOL_KEYS.filter(function (k) { return sel.schools.indexOf(k) >= 0; }); }
+
+  // ---------- chips ----------
+  function levelChips(levels) {
+    return LEVELS.filter(function (l) { return levels.indexOf(l.key) >= 0; })
+      .map(function (l) { return '<span class="chip lvl" title="' + esc(l.name) + '">' + esc(l.label) + "</span>"; }).join("");
+  }
+  function regChip(ev) {
+    if (ev.reg === "yes") {
+      var how = tr(ev, "how");
+      var inner = t("regYes") + (how ? ": " + esc(how) : "");
+      return '<span class="chip must">' + (ev.url ? '<a href="' + esc(ev.url) + '" target="_blank" rel="noopener">' + inner + " ↗</a>" : inner) + "</span>";
+    }
+    if (ev.reg === "no") return '<span class="chip walk">' + t("regNo") + "</span>";
+    if (ev.reg === "tbd") return '<span class="chip tbd">' + t("regTbd") + "</span>";
+    return '<span class="chip tbd">' + t("regNs") + "</span>";
+  }
+  function flagChips(ev) {
+    var out = "";
+    if (ev.clash) out += '<span class="chip clash">' + esc(t("clash", { t: ev.t })) + "</span>";
+    if (ev.leave) out += '<span class="chip leave">' + t("leave") + "</span>";
+    return out;
+  }
+  function timeHtml(ev) {
+    if (ev.two) return ev.two.split(" and ").map(function (p) { return "<span>" + esc(p) + "</span>"; }).join("<small>" + t("and") + "</small>");
+    if (!ev.t) return ev.type === "reg" ? "<span>" + t("allDay") + "</span>" : "<span>" + t("afternoon") + "</span><small>" + t("noTime") + "</small>";
+    return "<span>" + esc(ev.t) + "–" + esc(ev.e) + "</span>";
+  }
+  var STAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3.1-5.4 3.1 1.2-6L3.3 9.8l6.1-.7z" stroke-linejoin="round"/></svg>';
+
+  function eventHtml(ev) {
+    var sc = SCHOOLS[ev.s];
+    var n = dayDiff(ev.date, TODAY);
+    var title = tr(ev, "title");
+    return '<article class="ev' + (plan[ev.id] ? " planned" : "") + '" data-id="' + esc(ev.id) + '">' +
+      '<div class="ev-when"><span class="ev-day">' + t("days")[ev.date.getDay()] + '</span><span class="ev-date">' + fmtShort(ev.date) + "</span>" +
+      (n >= 0 && n <= 30 ? '<span class="ev-rel">' + rel(n) + "</span>" : "") + "</div>" +
+      '<div class="ev-time">' + timeHtml(ev) + "</div>" +
+      '<div class="ev-body">' +
+        '<div class="ev-head"><span class="type ' + ev.type + '">' + t(TYPE_KEY[ev.type]) + '</span><span class="ev-school"><b>' + esc(tr(sc, "short")) + "</b> · " + esc(tr(sc, "town")) + "</span></div>" +
+        '<h4 class="ev-title">' + esc(title) + "</h4>" +
+        '<p class="ev-desc">' + esc(tr(ev, "desc")) + "</p>" +
+        '<div class="tags">' + flagChips(ev) + regChip(ev) + levelChips(ev.levels) + "</div>" +
+      "</div>" +
+      '<button class="star" type="button" aria-pressed="' + (plan[ev.id] ? "true" : "false") + '" aria-label="' + esc(t("starAdd", { x: tr(sc, "short") + ": " + title })) + '" title="' + t("starTitle") + '">' + STAR + "</button>" +
+    "</article>";
+  }
+
+  // ---------- static text and header ----------
+  function renderStatic() {
+    document.documentElement.lang = LANG;
+    document.title = t("title");
+    document.querySelectorAll("[data-i18n]").forEach(function (el) { el.textContent = t(el.dataset.i18n); });
+    document.querySelectorAll("#lang button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.lang === LANG ? "true" : "false"); });
+    $("lede").textContent = t("lede", { date: fmtLong(DATA.checked) });
+    var left = EVENTS.filter(function (e) { return !e.past; }).length;
+    $("facts").innerHTML = [
+      t("factSchools", { n: "<b>" + SCHOOL_KEYS.length + "</b>" }),
+      t("factDates", { n: "<b>" + EVENTS.length + "</b>" }),
+      t("factLeft", { n: "<b>" + left + "</b>" }),
+      t("factChecked", { date: "<b>" + esc(fmtLong(DATA.checked)) + "</b>" })
+    ].map(function (s) { return "<span>" + s + "</span>"; }).join("");
+    $("legend").innerHTML = [["info", t("tInfo")], ["open", t("tOpen")], ["trial", t("legTrial")], ["reg", t("tReg")]]
+      .map(function (x) { return '<span><i class="sw ' + x[0] + '"></i>' + esc(x[1]) + "</span>"; }).join("");
+  }
+
+  // ---------- start screen ----------
+  function pickHtml(k) {
+    var sc = SCHOOLS[k];
+    return '<label class="pick"><input type="checkbox" id="pk-' + k + '" data-school="' + k + '"' + (sel.schools.indexOf(k) >= 0 ? " checked" : "") + ">" +
+      '<span class="pick-box"><span class="ck" aria-hidden="true"></span><span class="pick-name">' + esc(tr(sc, "name")) + "</span>" +
+      '<span class="pick-meta"><span>' + esc(tr(sc, "town")) + "</span>" + levelChips(sc.levels) + "</span>" +
+      '<span class="pick-count" id="pc-' + k + '"></span></span></label>';
+  }
+  function buildSetup() {
+    $("quick").innerHTML =
+      '<button type="button" class="btn small" data-quick="all">' + t("qAll") + "</button>" +
+      '<button type="button" class="btn small" data-quick="hdp">' + t("qHdp") + "</button>" +
+      '<button type="button" class="btn small" data-quick="none">' + t("qNone") + "</button>" +
+      '<span class="q-lab">' + t("qLevel") + "</span>" +
+      LEVELS.map(function (l) {
+        return '<button type="button" class="btn small mono" data-quick="lv-' + l.key + '" title="' + esc(t("qLevelTip", { level: l.name })) + '">' + esc(l.label) + "</button>";
+      }).join("");
+    $("pick-hdp").innerHTML = SCHOOL_KEYS.filter(function (k) { return SCHOOLS[k].area === "hdp"; }).map(pickHtml).join("");
+    $("pick-near").innerHTML = SCHOOL_KEYS.filter(function (k) { return SCHOOLS[k].area === "near"; }).map(pickHtml).join("");
+    var list = presets();
+    $("presets").innerHTML = list.concat([{ id: "custom", label: t("pCustom") }]).map(function (p) {
+      return '<label class="tog"><input type="radio" name="preset" id="pr-' + p.id + '" value="' + p.id + '"' + (sel.preset === p.id ? " checked" : "") + "><span>" + esc(p.label) + "</span></label>";
+    }).join("");
+    [$("d-from"), $("d-to")].forEach(function (inp) { inp.min = SEASON.start; inp.max = SEASON.end; });
+    $("d-from").value = sel.from || "";
+    $("d-to").value = sel.to || "";
+    updateSetup();
+  }
+  function updateSetup() {
+    var ok = rangeOk();
+    var err = $("d-err");
+    err.hidden = ok;
+    err.textContent = ok ? "" : (sel.from && sel.to ? t("errRange") : t("errDate"));
+    SCHOOL_KEYS.forEach(function (k) {
+      var c = $("pc-" + k);
+      if (!c) return;
+      var n = ok ? EVENTS.filter(function (e) { return e.s === k && !e.past && inRange(e); }).length : 0;
+      c.textContent = ok ? (n === 0 ? t("cnt0") : n === 1 ? t("cnt1") : t("cntN", { n: n })) : "";
+      c.classList.toggle("has", n > 0);
+    });
+    var k = sel.schools.length;
+    var n = ok ? EVENTS.filter(function (e) { return !e.past && inSel(e); }).length : 0;
+    var sum = $("go-sum"), btn = $("btn-show");
+    if (!k) sum.textContent = t("needSchool");
+    else if (!ok) sum.textContent = err.textContent;
+    else if (!n) sum.textContent = t("sum0");
+    else sum.innerHTML = t("sum", { events: "<b>" + esc(nEvents(n)) + "</b>", schools: "<b>" + esc(nSchools(k)) + "</b>", range: esc(fmtRange(sel.from, sel.to)) });
+    btn.disabled = !k || !ok;
+    btn.textContent = k && ok && n ? t("showN", { events: nEvents(n) }) : t("show");
+  }
+  function syncPicks() {
+    document.querySelectorAll("[data-school]").forEach(function (i) { i.checked = sel.schools.indexOf(i.dataset.school) >= 0; });
+    updateSetup();
+  }
+
+  $("view-setup").addEventListener("change", function (ev) {
+    var el = ev.target;
+    if (el.dataset.school) {
+      sel.schools = SCHOOL_KEYS.filter(function (k) { var i = $("pk-" + k); return i && i.checked; });
+      updateSetup();
+    } else if (el.name === "preset") {
+      sel.preset = el.value;
+      var p = findPreset(el.value);
+      if (p) { sel.from = p.from; sel.to = p.to; $("d-from").value = p.from; $("d-to").value = p.to; }
+      else $("d-from").focus();
+      updateSetup();
+    }
+  });
+  ["d-from", "d-to"].forEach(function (id) {
+    $(id).addEventListener("input", function () {
+      sel.from = $("d-from").value; sel.to = $("d-to").value;
+      sel.preset = "custom";
+      var c = $("pr-custom"); if (c) c.checked = true;
+      updateSetup();
+    });
+  });
+  $("quick").addEventListener("click", function (ev) {
+    var b = ev.target.closest("[data-quick]");
+    if (!b) return;
+    var q = b.dataset.quick;
+    if (q === "all") sel.schools = SCHOOL_KEYS.slice();
+    else if (q === "none") sel.schools = [];
+    else if (q === "hdp") sel.schools = SCHOOL_KEYS.filter(function (k) { return SCHOOLS[k].area === "hdp"; });
+    else if (q.indexOf("lv-") === 0) {
+      var lv = q.slice(3);
+      sel.schools = SCHOOL_KEYS.filter(function (k) { return SCHOOLS[k].levels.indexOf(lv) >= 0; });
+    }
+    syncPicks();
+  });
+
+  // ---------- results ----------
+  function renderSummary() {
+    var keys = selectedKeys();
+    var names = keys.map(function (k) { return tr(SCHOOLS[k], "short"); });
+    var up = EVENTS.filter(function (e) { return !e.past && inSel(e); });
+    var mustReg = up.filter(function (e) { return e.reg === "yes"; }).length;
+    $("res-h").textContent = up.length ? t("resTitle", { events: nEvents(up.length) }) : t("resTitle0");
+    $("res-sub").innerHTML = "<b>" + esc(names.join(", ")) + "</b> · " + esc(fmtRange(sel.from, sel.to)) + "." + (mustReg ? " " + esc(t("resReg", { n: mustReg })) : "");
+    $("sel-text").innerHTML = "<b>" + esc(keys.length <= 3 ? names.join(", ") : nSchools(keys.length)) + "</b> · " + esc(fmtRange(sel.from, sel.to));
+  }
+
+  function renderStrip(evs) {
+    var start = monday(parse(sel.from));
+    var lastAll = EVENTS.length ? EVENTS[EVENTS.length - 1].date : TODAY;
+    var cap = lastAll > TODAY ? lastAll : TODAY;
+    var end = parse(sel.to);
+    if (end > cap) end = cap;
+    if (end < start) end = addDays(start, 6);
+    var html = "", mhtml = "", lastMonth = -1, weeks = 0;
+    var nowMon = iso(monday(TODAY));
+    for (var m = new Date(start); m <= end; m = addDays(m, 7)) {
+      var mIso = iso(m), sun = addDays(m, 6), wk = isoWeek(m);
+      var inWeek = evs.filter(function (e) { return e.date >= m && e.date <= sun; });
+      var blocks = inWeek.map(function (e) { return '<i class="blk ' + e.type + (e.past ? " past" : "") + '"></i>'; }).join("");
+      var cls = "wk" + (mIso === nowMon ? " now" : "") + (inWeek.length ? "" : " gap");
+      var target = inWeek.length ? ' href="#wk-' + wk.y + "-" + wk.w + '"' : "";
+      html += '<a class="' + cls + '"' + target + ' title="' + esc(t("weekTip", { w: wk.w, events: nEvents(inWeek.length) })) + '"><span class="stack">' + blocks + '</span><span class="lab">' + wk.w + "</span></a>";
+      var thu = addDays(m, 3);
+      if (thu.getMonth() !== lastMonth) {
+        mhtml += "<span>" + t("months")[thu.getMonth()] + (thu.getMonth() === 0 || lastMonth === -1 ? " ’" + String(thu.getFullYear()).slice(2) : "") + "</span>";
+        lastMonth = thu.getMonth();
+      } else mhtml += "<span></span>";
+      weeks++;
+    }
+    $("strip").innerHTML = html;
+    $("months").innerHTML = mhtml;
+    $("strip-scroll").style.setProperty("--weeks", weeks);
+  }
+
+  function renderFilters(up) {
+    var present = LEVELS.filter(function (l) { return up.some(function (e) { return e.levels.indexOf(l.key) >= 0; }); });
+    var fl = $("f-levels");
+    fl.hidden = present.length < 2;
+    // A hidden row must not keep filtering.
+    if (fl.hidden) filt.levels = LEVELS.map(function (l) { return l.key; });
+    fl.innerHTML = '<span class="flabel">' + t("fLevel") + "</span>" + present.map(function (l) {
+      return '<label class="tog" title="' + esc(l.name) + '"><input type="checkbox" id="lv-' + l.key + '" data-level="' + l.key + '"' +
+        (filt.levels.indexOf(l.key) >= 0 ? " checked" : "") + "><span>" + esc(l.label) + "</span></label>";
+    }).join("");
+    $("f-clash").checked = filt.hideClash;
+    $("f-plan").checked = filt.planOnly;
+  }
+
+  function renderTimeline(evs) {
+    var nowWk = isoWeek(TODAY);
+    $("timeline").innerHTML = PERIODS.filter(function (p) { return p.to >= sel.from && p.from <= sel.to; }).map(function (p) {
+      var pe = evs.filter(function (e) { return e.d >= p.from && e.d <= p.to; });
+      var weeks = [], byWeek = {};
+      pe.forEach(function (e) {
+        var k = e.wky + "-" + e.wk;
+        if (!byWeek[k]) { byWeek[k] = []; weeks.push(k); }
+        byWeek[k].push(e);
+      });
+      var inner = weeks.map(function (k) {
+        var mon = monday(byWeek[k][0].date), sun = addDays(mon, 6);
+        var range = mon.getDate() + (mon.getMonth() !== sun.getMonth() ? " " + t("months")[mon.getMonth()] : "") + "–" + fmtShort(sun);
+        var isNow = k === nowWk.y + "-" + nowWk.w;
+        return '<div class="week" id="wk-' + k + '"><div class="week-h"><span class="wn">' + t("week", { w: k.split("-")[1] }) + '</span><span class="wr">' + range + "</span>" +
+          (isNow ? '<span class="wnow">' + t("thisWeek") + "</span>" : "") + '</div><div class="events">' + byWeek[k].map(eventHtml).join("") + "</div></div>";
+      }).join("");
+      return '<section class="period" data-period="' + esc(p.id) + '"><div class="period-head"><h2>' + esc(tr(p, "title")) + "</h2><p>" + esc(tr(p, "intro")) + '</p><span class="past-note" hidden></span></div>' +
+        inner + '<p class="empty" hidden>' + t("emptyPeriod") + "</p></section>";
+    }).join("");
+  }
+
+  function schoolCard(key) {
+    var sc = SCHOOLS[key];
+    var evs = EVENTS.filter(function (e) { return e.s === key; });
+    var left = evs.filter(function (e) { return !e.past; });
+    var nextEv = left[0];
+    return '<div class="sc"><h4>' + esc(tr(sc, "name")) + '</h4><div class="addr">' + esc(tr(sc, "addr")) + '</div><div class="tags">' + levelChips(sc.levels) + "</div><p>" + esc(tr(sc, "about")) + "</p>" +
+      '<div class="meta">' + t("scMeta", { left: left.length, total: evs.length }) + (nextEv ? " · " + t("scNext", { date: fmtShort(nextEv.date) }) : "") + "</div>" +
+      '<a href="' + esc(sc.url) + '" target="_blank" rel="noopener">' + t("scLink") + " ↗</a></div>";
+  }
+
+  function renderResults() {
+    var evs = EVENTS.filter(inSel);
+    var up = evs.filter(function (e) { return !e.past; });
+    renderSummary();
+    renderStrip(evs);
+    renderFilters(up);
+    renderTimeline(evs);
+
+    var any = ANYTIME.filter(function (a) { return sel.schools.indexOf(a.s) >= 0; });
+    $("any-sec").hidden = !any.length;
+    $("anytime").innerHTML = any.map(function (a) {
+      var sc = SCHOOLS[a.s];
+      return '<div class="any"><span class="ev-school"><b>' + esc(tr(sc, "short")) + "</b> · " + esc(tr(sc, "town")) + "</span><h3>" + esc(tr(a, "title")) + "</h3><p>" + esc(tr(a, "desc")) +
+        '</p><p><a href="' + esc(a.url) + '" target="_blank" rel="noopener">' + esc(tr(a, "link")) + " ↗</a></p></div>";
+    }).join("");
+
+    ["hdp", "near"].forEach(function (area) {
+      var keys = selectedKeys().filter(function (k) { return SCHOOLS[k].area === area; });
+      $("g-" + area).hidden = !keys.length;
+      $("s-" + area).innerHTML = keys.map(schoolCard).join("");
+    });
+
+    $("notes").innerHTML = (DATA.notes || []).map(function (n) { return "<li><b>" + esc(tr(n, "b")) + "</b> " + esc(tr(n, "t")) + "</li>"; }).join("");
+    $("src-checked").textContent = t("lastCheck", { date: fmtLong(DATA.checked) });
+    $("sources").innerHTML = SOURCES.map(function (s) {
+      return '<li><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(tr(s, "label")) + "</a></li>";
+    }).join("");
+    apply();
+  }
+
+  function apply() {
+    var shown = 0, total = 0;
+    document.querySelectorAll("#timeline .ev").forEach(function (el) {
+      var e = BY_ID[el.dataset.id];
+      if (e.past) { el.hidden = true; return; }
+      total++;
+      var ok = e.levels.some(function (l) { return filt.levels.indexOf(l) >= 0; }) &&
+        !(filt.hideClash && e.clash) &&
+        !(filt.planOnly && !plan[e.id]);
+      el.hidden = !ok;
+      if (ok) shown++;
+    });
+    document.querySelectorAll("#timeline .week").forEach(function (w) { w.hidden = !w.querySelector(".ev:not([hidden])"); });
+    document.querySelectorAll("#timeline .period").forEach(function (p) {
+      p.querySelector(".empty").hidden = !!p.querySelector(".week:not([hidden])");
+      var past = [].slice.call(p.querySelectorAll(".ev")).filter(function (el) { return BY_ID[el.dataset.id].past; }).length;
+      var note = p.querySelector(".past-note");
+      note.hidden = !past;
+      note.textContent = past ? (past === 1 ? t("past1") : t("pastN", { n: past })) : "";
+    });
+    $("count").textContent = t("count", { a: shown, b: total });
+  }
+
+  document.querySelector(".filters").addEventListener("change", function (ev) {
+    var el = ev.target;
+    if (el.dataset.level) {
+      var k = el.dataset.level, i = filt.levels.indexOf(k);
+      if (el.checked && i < 0) filt.levels.push(k);
+      if (!el.checked && i >= 0) filt.levels.splice(i, 1);
+    }
+    if (el.id === "f-clash") filt.hideClash = el.checked;
+    if (el.id === "f-plan") filt.planOnly = el.checked;
+    apply();
+  });
+
+  $("timeline").addEventListener("click", function (ev) {
+    var b = ev.target.closest(".star");
+    if (!b) return;
+    var card = b.closest(".ev"), id = card.dataset.id;
+    if (plan[id]) delete plan[id]; else plan[id] = 1;
+    savePlan();
+    b.setAttribute("aria-pressed", plan[id] ? "true" : "false");
+    card.classList.toggle("planned", !!plan[id]);
+    if (filt.planOnly) apply();
+  });
+
+  // ---------- views ----------
+  function showView(v) {
+    view = v;
+    // The big page header belongs to the start screen. Without it, the results open directly on the event list.
+    $("intro").hidden = v !== "setup";
+    $("view-setup").hidden = v !== "setup";
+    $("view-results").hidden = v !== "results";
+    $("sel-sum").hidden = v !== "results";
+    window.scrollTo(0, 0);
+  }
+  $("btn-show").addEventListener("click", function () {
+    if (!sel.schools.length || !rangeOk()) return;
+    store(SEL_KEY, sel);
+    renderResults();
+    showView("results");
+    try { $("res-h").focus({ preventScroll: true }); } catch (e) { /* old browser */ }
+  });
+  function backToSetup() { updateSetup(); showView("setup"); }
+  $("btn-change").addEventListener("click", backToSetup);
+  $("btn-change-top").addEventListener("click", backToSetup);
+
+  $("lang").addEventListener("click", function (ev) {
+    var b = ev.target.closest("[data-lang]");
+    if (!b || b.dataset.lang === LANG) return;
+    LANG = b.dataset.lang;
+    store(LANG_KEY, LANG);
+    renderStatic();
+    buildSetup();
+    if (view === "results") renderResults();
+  });
+
+  renderStatic();
+  buildSetup();
+})();
+</script>
+</body>
+</html>
